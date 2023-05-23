@@ -1,0 +1,78 @@
+findflips (c) 2023 Jacek Lipkowski SQ5BPF <sq5bpf@lipkowski.org>
+
+This is a simple utility to compare two files of the same size, 
+show which bytes have changed, and which bits have changed.
+
+
+The output is supposed to be easy to read, especially if there is
+a small amount of changes.
+
+Changed parts of the files are shown as 16-byte blocks, with the
+changed bytes underlined by ^^ and a handy hexdump on the right.
+
+I wrote it to ease reverse engineering of the configuration memory
+of various handheld radios and similar devices. 
+
+
+###### Usage:
+
+Usage:
+
+./flipbits file1 file2
+
+file1 and file2 have to be the same size.
+
+
+######  Example output:
+
+There are two sources d1 and d2, they differ in the bytes 0x0e80, 0x0e81,
+and 0x0ea1. 
+
+The ^^ characters show the bytes that have changed in the hexdump.
+
+
+
+The changed bytes are then shown separately. For example for byte at
+offset 0x0e80:
+
+0x0e80: d1: 0xcd (205)   d2: 0x00 (000)
+0xcd 11001101
+0x00 00000000
+     76  32 0
+
+In the original the value was 0xcd (205 decimal), in the changed file it
+is 0x00 (0 decimal).
+
+The numbers below the bits show which bits have changed, and their
+positions. For example for byte 0x0e80  the bits 7, 6, 3, 2, 0 have
+changed their state.
+
+
+   0x000e80 |0 |1 |2 |3 |4 |5 |6 |7 |8 |9 |a |b |c |d |e |f |
+   ---------+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+------------
+d1 0x000e80: cd 02 cd 00 00 cd cf cf ff ff 00 00 ff ff ff ff   ................   
+d2 0x000e80: 00 00 cd 00 00 cd cf cf ff ff 00 00 ff ff ff ff   ................   
+>            ^^ ^^                                           
+0x0e80: d1: 0xcd (205)   d2: 0x00 (000)
+0xcd 11001101
+0x00 00000000
+     76  32 0
+
+
+0x0e81: d1: 0x02 (002)   d2: 0x00 (000)
+0x02 00000010
+0x00 00000000
+           1 
+
+
+
+   0x000ea0 |0 |1 |2 |3 |4 |5 |6 |7 |8 |9 |a |b |c |d |e |f |
+   ---------+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+------------
+d1 0x000ea0: 00 ff ff ff ff ff ff ff 01 00 00 00 ff ff ff ff   ................   
+d2 0x000ea0: 00 01 ff ff ff ff ff ff 01 00 00 00 ff ff ff ff   ................   
+>               ^^                                           
+0x0ea1: d1: 0xff (255)   d2: 0x01 (001)
+0xff 11111111
+0x01 00000001
+     7654321 
+
