@@ -96,7 +96,7 @@ int main(int argc,char **argv) {
 	struct stat stat1,stat2;
 	int i,j,a,size,todump;
 
-	if (argc<4) {
+	if (argc<3) {
 		printf("findflips - shows differences in single bits between two files\nUsage: %s file1 file2\nfile1 and file2 have to be the same size\n",argv[0]);
 		exit(1);
 	}
